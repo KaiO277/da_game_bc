@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'api',
     'rest_framework',
     'corsheaders',
-    'ckeditor',
+    'ckeditor5',
 ]
 
 MIDDLEWARE = [
@@ -193,4 +193,5 @@ CKEDITOR_CONFIGS = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_TRUSTED_ORIGINS= ['http://127.0.0.1:8000']
+CSRF_TRUSTED_ORIGINS = ['https://yourdomain.com', 'https://anotherdomain.com']
+
