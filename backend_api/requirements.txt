@@ -1,0 +1,24 @@
+#
+django==3.2.21
+python-dotenv
+django-cors-headers
+djangorestframework-simplejwt
+django-ckeditor
+# psycopg2
+psycopg2-binary-2.9.3
+django-extensions
+getmac
+django-taggit
+Pillow
+django-currentuser
+user-agents
+django-user-agents
+unidecode
+requests
+gunicorn
+django-protected-media
+djangorestframework-api-key
+boto3
+django-storages
+cryptography
+
