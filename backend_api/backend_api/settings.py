@@ -96,9 +96,10 @@ WSGI_APPLICATION = 'backend_api.wsgi.application'
 #     }
 # }
 
-DATABASE = {
+DATABASES = {
     'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=1800)
 }
+
 
 
 # Password validation
