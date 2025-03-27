@@ -5,7 +5,8 @@ django-cors-headers
 djangorestframework-simplejwt
 django-ckeditor
 # psycopg2
-psycopg2-binary-2.9.3
+psycopg2-binary==2.9.3
+
 django-extensions
 getmac
 django-taggit
@@ -21,4 +22,6 @@ djangorestframework-api-key
 boto3
 django-storages
 cryptography
+gunicorn
+whitenoise
 
