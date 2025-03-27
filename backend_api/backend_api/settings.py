@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'api',
     'rest_framework',
     'corsheaders',
-    'ckeditor5',
+    'django_ckeditor_5',
 ]
 
 MIDDLEWARE = [
@@ -142,7 +142,7 @@ STATICFILES_FINDERS = [
 
 PROJECT_DIR = Path(__file__).resolve().parent
 STATICFILES_DIRS = [
-    os.path.join(PROJECT_DIR, 'static'),
+    BASE_DIR / "backend_api/static",
 ]
 
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
