@@ -25,4 +25,5 @@ django-storages
 cryptography
 gunicorn
 whitenoise
+dj-database-url
 
