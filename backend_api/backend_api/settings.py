@@ -146,11 +146,12 @@ PROJECT_DIR = Path(__file__).resolve().parent
 
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'backend_api/static'),  # Kiểm tra đường dẫn này
-]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # Đảm bảo dòng này có
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 MEDIA_URL = '/media/'  # URL để truy cập media files
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Thư mục lưu trữ file media
 
