@@ -142,15 +142,15 @@ STATICFILES_FINDERS = [
 ]
 
 PROJECT_DIR = Path(__file__).resolve().parent
-STATICFILES_DIRS = [
-    BASE_DIR / "backend_api/static",
-]
+
 
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
-
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'backend_api/static'),  # Kiểm tra đường dẫn này
+]
 MEDIA_URL = '/media/'  # URL để truy cập media files
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Thư mục lưu trữ file media
 
@@ -185,7 +185,9 @@ STATICSTORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 CKEDITOR_CONFIGS = {
     "default": {
-        "versionCheck": False
+        "toolbar": "full",
+        "height": 300,
+        "width": "auto",
     }
 }
 
