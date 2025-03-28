@@ -194,5 +194,5 @@ CKEDITOR_CONFIGS = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_TRUSTED_ORIGINS = ['https://dagamebc-production.up.railway.app/', 'https://anotherdomain.com']
+CSRF_TRUSTED_ORIGINS = ['https://dagamebc-production.up.railway.app/']
 
