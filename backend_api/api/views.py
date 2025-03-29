@@ -36,6 +36,11 @@ from .serializers import UserDeleteSerializer
 
 # Create your views here.
 
+from django.http import HttpResponse
+
+def index(request):
+    return HttpResponse("<h1>Trang Index - Test Django trên Railway</h1>")
+
 class RegisterAPIView(APIView):
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
