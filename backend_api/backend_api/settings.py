@@ -31,7 +31,9 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (os.getenv("APP_DEBUG") == 'true')
 
-ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS')]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "dagamebc-production.up.railway.app"]
+
+
 
 
 # Application definition
@@ -157,7 +159,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     "http://192.168.181.1:3000",  # địa chỉ của React client
     "http://192.168.1.11:5000" ,
-    "https://dagamebc-production.up.railway.app"
+    "https://dagamebc-production.up.railway.app",
 ]
 
 
