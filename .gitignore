@@ -54,7 +54,7 @@ venv
 
 # /Hope_Horizon_api
 backend_api/.env
-backend_api/static
+# backend_api/static
 backend_api/media
 backend_api/protected
 backend_api/*/migrations/
