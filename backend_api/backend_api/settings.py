@@ -151,7 +151,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # Đảm bảo có dòng này
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'your_app_name', 'static'),
+    os.path.join(BASE_DIR, 'backend_api', 'static'),
 ]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
