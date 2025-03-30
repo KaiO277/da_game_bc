@@ -145,10 +145,15 @@ STATICFILES_FINDERS = [
 
 PROJECT_DIR = Path(__file__).resolve().parent
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')  
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # Đảm bảo có dòng này
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'your_app_name', 'static'),
+]
+
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/' 
