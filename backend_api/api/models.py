@@ -1,6 +1,6 @@
 from django.db import models
 # from api.submodels.models_post import *
-# from api.submodels.models_podcast import *
+from api.submodels.models_test import *
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 from django.utils import dateformat
