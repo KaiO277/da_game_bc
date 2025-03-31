@@ -25,3 +25,22 @@ class ProductMVS(viewsets.ModelViewSet):
         queryset = Product.objects.all()
         serializers = self.serializer_class(queryset, many=True)
         return Response(serializers.data, status=status.HTTP_200_OK)
+    
+    @action(methods=['POST'], detail = False, url_path='product_add_api', url_name='product_add_api')
+    def product_add_api(self, request, *args, **kwargs):
+        try:
+            serializers = self.serializer_class(data=request.data)
+            if serializers.is_valid():
+                model = serializers.add(request)
+                if model:
+                    data = {}
+                    data['message'] = 'Add successfully!'
+                    return Response(data=data, status=status.HTTP_201_CREATED)
+                return Response(
+                    {'error': 'Duplicate or invalid data'},
+                    status=status_http.HTTP_ME_458_DUPLICATE
+                )
+            return Response(data=serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            print("ProductMVS_add_api: ", error)
+        return Response({'error':'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
