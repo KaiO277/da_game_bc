@@ -1,5 +1,10 @@
 from django.db import models
-from api.models import CustomUser
+from django.contrib.auth.models import User
+# from api.models import CustomUser
+# from django.contrib.auth import get_user_model
+
+
+# CustomUser = get_user_model()
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
@@ -10,12 +15,10 @@ class Product(models.Model):
         ordering = ('id',)
 
     def __str__(self):
-        if self.name:
-            return self.name 
-        return str(self.id) + "_" + "Product"
+        return self.name if self.name else f"Product {self.id}"
     
 class NFT(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='nfts')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='nfts')
     token_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=100)
     image_url = models.TextField()
@@ -43,7 +46,7 @@ class Race(models.Model):
     
 
 class Bet(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='bets')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bets')
     nft = models.ForeignKey('NFT', on_delete=models.CASCADE, related_name='bets')
     race = models.ForeignKey('Race', on_delete=models.CASCADE, related_name='bets')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -53,7 +56,7 @@ class Bet(models.Model):
         return f"Bet by {self.user.username} on Race: {self.race.name} with NFT: {self.nft.name} (Amount: {self.amount})"
     
 class Transaction(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='transactions')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='transactions')
     nft = models.ForeignKey('NFT', on_delete=models.CASCADE, related_name='transactions', null=True, blank=True)
     tx_type = models.CharField(
         max_length=50,
