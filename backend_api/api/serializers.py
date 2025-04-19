@@ -29,7 +29,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ['wallet_address', 'avatar_url', 'role']
+        fields = ['wallet_address', 'avatar_url', 'role', 'birthday']
 
 class RegisterSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer()  # Thêm profile vào serializer đăng ký
