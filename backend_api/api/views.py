@@ -43,11 +43,23 @@ def index(request):
 
 class RegisterAPIView(APIView):
     def post(self, request):
-        serializer = RegisterSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Đăng ký thành công"}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            serializer = RegisterSerializer(data=request.data)
+            if serializer.is_valid():
+                user = serializer.save()
+                return Response({
+                    "message": "Đăng ký thành công",
+                    "user_id": str(user.id),
+                    "username": user.username,
+                    "wallet_address": user.profile.wallet_address,
+                    "role": user.profile.role
+                }, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()  # hoặc log bằng logger nếu bạn dùng log framework
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 # class UserMVS(viewsets.ModelViewSet):
 #     serializer_class = UserSerializer
