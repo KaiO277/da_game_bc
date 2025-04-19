@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+from django.core.wsgi import get_wsgi_application
 from pathlib import Path
 import os
 from datetime import timedelta
@@ -65,10 +65,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'backend_api.urls'
 
+WSGI_APPLICATION = 'backend_api.wsgi.application'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')], 
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

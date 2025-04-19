@@ -42,7 +42,7 @@ urlpatterns = [
 
     #
     path('auth/google/', GoogleView.as_view(), name='google'),
-    path('auth/login/', LoginAPIView.as_view(), name='api-login'),
+    path('login/', LoginAPIView.as_view(), name='api-login'),
     path('auth/login_admin/', LoginAdminAPIView.as_view(), name='api-login-admin'),
     path('register/', RegisterAPIView.as_view(), name='api-register'),
     # path('user/user_get_list_all_api/', user_get_list_all_api),
