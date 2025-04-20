@@ -68,8 +68,8 @@ def login(request):
             return Response({"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Kiểm tra tính hợp lệ của thông điệp (timestamp không quá 60 giây)
-        if not is_message_fresh(message):
-            return Response({"error": "Expired message"}, status=status.HTTP_400_BAD_REQUEST)
+        # if not is_message_fresh(message):
+        #     return Response({"error": "Expired message"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Xác thực chữ ký
         pubkey_bytes = bytes(Pubkey.from_string(wallet_address))  # Chuyển wallet_address thành bytes
