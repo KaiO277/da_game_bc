@@ -26,4 +26,5 @@ cryptography
 gunicorn
 whitenoise
 dj-database-url
+solana
 
