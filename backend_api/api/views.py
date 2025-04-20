@@ -38,6 +38,69 @@ from .serializers import UserDeleteSerializer
 
 from django.http import HttpResponse
 
+from solana.publickey import PublicKey
+from solana.message import Message
+from solana.rpc.api import Client
+from nacl.signing import VerifyKey
+from nacl.exceptions import BadSignatureError
+from base64 import b64decode
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+import time
+
+@api_view(['POST'])
+def verify_signature(request):
+    """
+    Xác thực chữ ký Solana từ client gửi lên.
+    Request body gồm:
+    - public_key: địa chỉ ví người dùng (string)
+    - message: thông điệp đã ký (string)
+    - signature: chữ ký base64 (string)
+    """
+    try:
+        public_key = request.data['public_key']
+        message = request.data['message']
+        signature = request.data['signature']
+
+        # Bước 1: Kiểm tra message có hợp lệ không (ví dụ: timestamp trong 60s)
+        if not is_message_fresh(message):
+            return Response({"error": "Expired message"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Bước 2: Xác minh chữ ký bằng public key
+        pk_bytes = PublicKey(public_key).to_bytes()
+        verify_key = VerifyKey(pk_bytes)
+        signature_bytes = b64decode(signature)
+        message_bytes = message.encode("utf-8")
+
+        verify_key.verify(message_bytes, signature_bytes)
+
+        # Nếu không raise BadSignatureError thì thành công
+        return Response({"success": True, "wallet": public_key})
+
+    except BadSignatureError:
+        return Response({"error": "Invalid signature"}, status=status.HTTP_401_UNAUTHORIZED)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+def is_message_fresh(message: str) -> bool:
+    """
+    Kiểm tra xem message có bị quá hạn (cũ hơn 60s) hay không.
+    Ví dụ message: "Sign this message to login Meme Runner at 2025-04-20T16:01:00Z"
+    """
+    try:
+        parts = message.strip().split(" at ")
+        if len(parts) != 2:
+            return False
+        timestamp_str = parts[1]
+        msg_time = time.strptime(timestamp_str, "%Y-%m-%dT%H:%M:%SZ")
+        msg_timestamp = time.mktime(msg_time)
+        now = time.time()
+        return abs(now - msg_timestamp) < 60  # 60 giây hợp lệ
+    except:
+        return False
+
+
 def index(request):
     return HttpResponse("<h1>Trang Index - Test Django trên Railway</h1>")
 
