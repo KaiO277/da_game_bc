@@ -61,118 +61,12 @@ class RegisterAPIView(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# class UserMVS(viewsets.ModelViewSet):
-#     serializer_class = UserSerializer
-#     # permission_classes = [IsAuthenticated]
+class UserMeAPIView(APIView):
+    permission_classes = [IsAuthenticated]
 
-#     @action(methods=['GET'], detail=False, url_name='user_get_list_all_api', url_path='user_get_list_all_api')
-#     def user_get_list_all_api(self, request, *args, **kwargs):
-#         users = User.objects.all()
-
-#         # Tạo danh sách Users với thông tin nhóm
-#         users_data = [
-#             {
-#                 "id": user.id,
-#                 "username": user.username,
-#                 "email": user.email,
-#                 "groups": [
-#                     {"id": group.id, "name": group.name}
-#                     for group in user.groups.all()
-#                 ]
-#             }
-#             for user in users
-#         ]
-
-#         return Response({"users": users_data}, status=status.HTTP_200_OK)
-    
-#     @action(methods=['GET'], detail=False, url_name='user_get_all_api', url_path='user_get_all_api')
-#     def user_get_all_api(self, request, *args, **kwargs):
-#         users = User.objects.filter(groups__isnull=True)  # Đếm số lượng user
-#         users_data = [
-#             {
-#                 "id": user.id,
-#                 "username": user.username,
-#             }
-#             for user in users
-#         ]
-
-#         return Response({"users": users_data}, status=status.HTTP_200_OK)
-    
-#     @action(methods=['GET'], detail=False, url_name='user_get_count_api', url_path='user_get_count_api')
-#     def user_get_count_api(self, request, *args, **kwargs):
-#         user_count = User.objects.count()  # Đếm số lượng user
-#         return Response(
-#             {"user_count": user_count}, 
-#             status=status.HTTP_200_OK
-#         )
-    
-#     @action(methods=['POST'], detail=False, url_name='add_user_to_group', url_path='add_user_to_group')
-#     def add_user_to_group(self, request, *args, **kwargs):
-#         # Nhận thông tin từ request
-#         user_id = request.data.get('user_id')
-#         group_id = request.data.get('group_id')
-
-#         if not user_id or not group_id:
-#             return Response({"error": "Both user_id and group_id are required"}, status=status.HTTP_400_BAD_REQUEST)
-
-#         # Kiểm tra người dùng và nhóm có tồn tại không
-#         try:
-#             user = User.objects.get(id=user_id)
-#         except User.DoesNotExist:
-#             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-
-#         try:
-#             group = Group.objects.get(id=group_id)
-#         except Group.DoesNotExist:
-#             return Response({"error": "Group not found"}, status=status.HTTP_404_NOT_FOUND)
-
-#         # Thêm người dùng vào nhóm
-#         user.groups.add(group)
-#         # user.save()
-
-#         return Response({"message": f"User {user.username} added to group {group.name}"}, status=status.HTTP_200_OK)
-
-#     @action(methods=['GET'], detail=False, url_name='group_get_all_api', url_path='group_get_all_api')
-#     def group_get_all_api(self, request, *args, **kwargs):
-#         groups = Group.objects.all()
-
-#         # Serialize group data
-#         groups_data = [
-#             {
-#                 "id": group.id,
-#                 "name": group.name,
-#             }
-#             for group in groups
-#         ]
-
-#         return Response({"groups": groups_data}, status=status.HTTP_200_OK)
-
-#     @action(methods=['DELETE'], detail=False, url_name='remove_user_from_group', url_path='remove_user_from_group')
-#     def remove_user_from_group(self, request, *args, **kwargs):
-#         user_id = request.data.get('user_id')
-#         group_id = request.data.get('group_id')
-
-#         if not user_id or not group_id:
-#             return Response({"error": "Both user_id and group_id are required"}, status=status.HTTP_400_BAD_REQUEST)
-
-#         try:
-#             user = User.objects.get(id=user_id)
-#         except User.DoesNotExist:
-#             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-
-#         try:
-#             group = Group.objects.get(id=group_id)
-#         except Group.DoesNotExist:
-#             return Response({"error": "Group not found"}, status=status.HTTP_404_NOT_FOUND)
-
-#         if not user.groups.filter(id=group.id).exists():
-#             return Response({"error": f"User {user.username} is not in group {group.name}"}, 
-#                             status=status.HTTP_400_BAD_REQUEST)
-
-#         user.groups.remove(group)
-
-#         return Response({"message": f"User {user.username} removed from group {group.name}"}, 
-#                         status=status.HTTP_200_OK)
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
 
 class UserDeleteAPIView(APIView):
     def delete(self, request, *args, **kwargs):
