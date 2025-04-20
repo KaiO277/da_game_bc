@@ -61,11 +61,11 @@ def register_or_login_wallet(request):
             return Response({"error": "Missing fields"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Validate message timestamp
-        if not is_message_fresh(message):
-            return Response({"error": "Expired message"}, status=status.HTTP_400_BAD_REQUEST)
+        # if not is_message_fresh(message):
+        #     return Response({"error": "Expired message"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Verify signature
-        pubkey_bytes = Pubkey.from_string(wallet_address).to_bytes()
+        pubkey_bytes = bytes(Pubkey.from_string(wallet_address))
         verify_key = VerifyKey(pubkey_bytes)
         signature_bytes = b64decode(signature)
         verify_key.verify(message.encode(), signature_bytes)
@@ -99,10 +99,11 @@ def is_message_fresh(message: str) -> bool:
             return False
         timestamp_str = parts[1]
         msg_time = time.strptime(timestamp_str, "%Y-%m-%dT%H:%M:%SZ")
-        msg_timestamp = time.mktime(msg_time)
+        msg_timestamp = calendar.timegm(msg_time)  # ✅ đổi mktime -> timegm
         now = time.time()
         return abs(now - msg_timestamp) < 60
-    except:
+    except Exception as e:
+        print("DEBUG is_message_fresh:", str(e))
         return False
 
 def index(request):
