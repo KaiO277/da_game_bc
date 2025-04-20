@@ -97,6 +97,9 @@ def login(request):
     
 @api_view(['POST'])
 def register_or_login_wallet(request):
+    """
+    API đăng ký hoặc đăng nhập người dùng bằng cách xác thực chữ ký và trả về token JWT.
+    """
     try:
         username = request.data.get('username')
         profile_data = request.data.get('profile', {})
@@ -107,34 +110,36 @@ def register_or_login_wallet(request):
         if not username or not wallet_address or not signature or not message:
             return Response({"error": "Missing fields"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Validate message timestamp
-        # if not is_message_fresh(message):
-        #     return Response({"error": "Expired message"}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Verify signature
+        # Kiểm tra tính hợp lệ của chữ ký
         pubkey_bytes = bytes(Pubkey.from_string(wallet_address))
         verify_key = VerifyKey(pubkey_bytes)
         signature_bytes = b64decode(signature)
         verify_key.verify(message.encode(), signature_bytes)
 
-        # If verified, create or get User
+        # Nếu chữ ký hợp lệ, tạo hoặc lấy User
         user, created = User.objects.get_or_create(username=username)
+        
+        # Tạo profile cho người dùng
         profile, _ = Profile.objects.get_or_create(user=user)
         profile.wallet_address = wallet_address
         profile.save()
 
+        # Tạo JWT token cho người dùng
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+
         return Response({
             "message": "Login/Register successful",
             "username": user.username,
-            "wallet": profile.wallet_address
+            "wallet": profile.wallet_address,
+            "access_token": access_token  # Trả về JWT token
         }, status=status.HTTP_200_OK)
 
     except BadSignatureError:
         return Response({"error": "Invalid signature"}, status=status.HTTP_401_UNAUTHORIZED)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
+    
 def is_message_fresh(message: str) -> bool:
     """
     Kiểm tra xem message có bị quá hạn (cũ hơn 60s) hay không.
