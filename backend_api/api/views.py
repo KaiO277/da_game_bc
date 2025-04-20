@@ -51,7 +51,7 @@ import time
 @api_view(['POST'])
 def login(request):
     """
-    API đăng nhập bằng cách xác thực chữ ký Solana.
+    API đăng nhập bằng cách xác thực chữ ký Solana và trả về JWT token.
     Request body:
     - wallet_address: địa chỉ ví người dùng (string)
     - signature: chữ ký đã được base64 mã hóa (string)
@@ -68,8 +68,8 @@ def login(request):
             return Response({"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Kiểm tra tính hợp lệ của thông điệp (timestamp không quá 60 giây)
-        # if not is_message_fresh(message):
-        #     return Response({"error": "Expired message"}, status=status.HTTP_400_BAD_REQUEST)
+        if not is_message_fresh(message):
+            return Response({"error": "Expired message"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Xác thực chữ ký
         pubkey_bytes = bytes(Pubkey.from_string(wallet_address))  # Chuyển wallet_address thành bytes
@@ -80,17 +80,21 @@ def login(request):
         # Nếu không có lỗi, lấy hoặc tạo User
         user, created = User.objects.get_or_create(username=wallet_address)
 
+        # Tạo JWT token
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+
         return Response({
             "message": "Login successful",
-            "username": user.username
+            "username": user.username,
+            "access_token": access_token  # Trả về access token
         }, status=status.HTTP_200_OK)
 
     except BadSignatureError:
         return Response({"error": "Invalid signature"}, status=status.HTTP_401_UNAUTHORIZED)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
+    
 @api_view(['POST'])
 def register_or_login_wallet(request):
     try:
