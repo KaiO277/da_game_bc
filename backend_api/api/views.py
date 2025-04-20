@@ -49,6 +49,49 @@ from base64 import b64decode
 import time
 
 @api_view(['POST'])
+def login(request):
+    """
+    API đăng nhập bằng cách xác thực chữ ký Solana.
+    Request body:
+    - wallet_address: địa chỉ ví người dùng (string)
+    - signature: chữ ký đã được base64 mã hóa (string)
+    - message: thông điệp cần xác thực chữ ký (string)
+    """
+    try:
+        # Lấy dữ liệu từ request
+        wallet_address = request.data.get('wallet_address')
+        signature = request.data.get('signature')
+        message = request.data.get('message')
+
+        # Kiểm tra các trường cần thiết có được cung cấp hay không
+        if not wallet_address or not signature or not message:
+            return Response({"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Kiểm tra tính hợp lệ của thông điệp (timestamp không quá 60 giây)
+        if not is_message_fresh(message):
+            return Response({"error": "Expired message"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Xác thực chữ ký
+        pubkey_bytes = bytes(Pubkey.from_string(wallet_address))  # Chuyển wallet_address thành bytes
+        verify_key = VerifyKey(pubkey_bytes)
+        signature_bytes = b64decode(signature)
+        verify_key.verify(message.encode(), signature_bytes)  # Kiểm tra chữ ký
+
+        # Nếu không có lỗi, lấy hoặc tạo User
+        user, created = User.objects.get_or_create(username=wallet_address)
+
+        return Response({
+            "message": "Login successful",
+            "username": user.username
+        }, status=status.HTTP_200_OK)
+
+    except BadSignatureError:
+        return Response({"error": "Invalid signature"}, status=status.HTTP_401_UNAUTHORIZED)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
 def register_or_login_wallet(request):
     try:
         username = request.data.get('username')
