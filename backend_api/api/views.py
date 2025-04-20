@@ -37,56 +37,61 @@ from .serializers import UserDeleteSerializer
 # Create your views here.
 
 from django.http import HttpResponse
-
-from solana.publickey import PublicKey
-from solana.message import Message
-from solana.rpc.api import Client
-from nacl.signing import VerifyKey
-from nacl.exceptions import BadSignatureError
-from base64 import b64decode
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from django.contrib.auth.models import User
+from .models import Profile
+from solders.pubkey import Pubkey
+from nacl.signing import VerifyKey
+from nacl.exceptions import BadSignatureError
+from base64 import b64decode
 import time
 
 @api_view(['POST'])
-def verify_signature(request):
-    """
-    Xác thực chữ ký Solana từ client gửi lên.
-    Request body gồm:
-    - public_key: địa chỉ ví người dùng (string)
-    - message: thông điệp đã ký (string)
-    - signature: chữ ký base64 (string)
-    """
+def register_or_login_wallet(request):
     try:
-        public_key = request.data['public_key']
-        message = request.data['message']
-        signature = request.data['signature']
+        username = request.data.get('username')
+        profile_data = request.data.get('profile', {})
+        wallet_address = profile_data.get('wallet_address')
+        signature = profile_data.get('signature')
+        message = profile_data.get('message')
 
-        # Bước 1: Kiểm tra message có hợp lệ không (ví dụ: timestamp trong 60s)
+        if not username or not wallet_address or not signature or not message:
+            return Response({"error": "Missing fields"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validate message timestamp
         if not is_message_fresh(message):
             return Response({"error": "Expired message"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Bước 2: Xác minh chữ ký bằng public key
-        pk_bytes = PublicKey(public_key).to_bytes()
-        verify_key = VerifyKey(pk_bytes)
+        # Verify signature
+        pubkey_bytes = Pubkey.from_string(wallet_address).to_bytes()
+        verify_key = VerifyKey(pubkey_bytes)
         signature_bytes = b64decode(signature)
-        message_bytes = message.encode("utf-8")
+        verify_key.verify(message.encode(), signature_bytes)
 
-        verify_key.verify(message_bytes, signature_bytes)
+        # If verified, create or get User
+        user, created = User.objects.get_or_create(username=username)
+        profile, _ = Profile.objects.get_or_create(user=user)
+        profile.wallet_address = wallet_address
+        profile.save()
 
-        # Nếu không raise BadSignatureError thì thành công
-        return Response({"success": True, "wallet": public_key})
+        return Response({
+            "message": "Login/Register successful",
+            "username": user.username,
+            "wallet": profile.wallet_address
+        }, status=status.HTTP_200_OK)
 
     except BadSignatureError:
         return Response({"error": "Invalid signature"}, status=status.HTTP_401_UNAUTHORIZED)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+
 def is_message_fresh(message: str) -> bool:
     """
     Kiểm tra xem message có bị quá hạn (cũ hơn 60s) hay không.
-    Ví dụ message: "Sign this message to login Meme Runner at 2025-04-20T16:01:00Z"
+    Format: "Sign to register Meme Runner at 2025-04-20T16:01:00Z"
     """
     try:
         parts = message.strip().split(" at ")
@@ -96,10 +101,9 @@ def is_message_fresh(message: str) -> bool:
         msg_time = time.strptime(timestamp_str, "%Y-%m-%dT%H:%M:%SZ")
         msg_timestamp = time.mktime(msg_time)
         now = time.time()
-        return abs(now - msg_timestamp) < 60  # 60 giây hợp lệ
+        return abs(now - msg_timestamp) < 60
     except:
         return False
-
 
 def index(request):
     return HttpResponse("<h1>Trang Index - Test Django trên Railway</h1>")

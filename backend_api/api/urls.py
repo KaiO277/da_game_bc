@@ -6,7 +6,7 @@ from rest_framework import permissions
 from .serializers import MyTokenObtainPairView
 from .views import UserMeAPIView
 from .views import *
-
+from .views import register_or_login_wallet 
 
 urlpatterns = [
     #
@@ -16,6 +16,7 @@ urlpatterns = [
     #
     path('auth/google/', GoogleView.as_view(), name='google'),
     path('login/', LoginAPIView.as_view(), name='api-login'),
+    path('api/auth/register_or_login/', register_or_login_wallet),
     path('auth/login_admin/', LoginAdminAPIView.as_view(), name='api-login-admin'),
     path('register/', RegisterAPIView.as_view(), name='api-register'),
     path('user/delete_user_api/', UserDeleteAPIView.as_view(), name='delete_user_api'),

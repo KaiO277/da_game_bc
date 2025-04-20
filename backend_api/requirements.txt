@@ -1,5 +1,4 @@
 #
-# django==3.2.21
 django>=4.0
 python-dotenv
 django-cors-headers
@@ -27,4 +26,4 @@ gunicorn
 whitenoise
 dj-database-url
 solana
-
+pynacl

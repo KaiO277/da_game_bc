@@ -23,15 +23,11 @@ import uuid
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    birthday = models.DateField(null=True, blank=True)
     wallet_address = models.CharField(max_length=255, unique=True)
-    avatar_url = models.TextField(null=True, blank=True, default="https://example.com/default-avatar.png")
-    role = models.CharField(max_length=50, choices=[('player', 'Player'), ('admin', 'Admin')], default='player')
-
+    
     def __str__(self):
         # Format birthday to DD-MM-YYYY if it's not None
-        formatted_birthday = dateformat.format(self.birthday, 'd/m/Y') if self.birthday else "N/A"
-        return f"Profile of {self.user.username}, Birthday: {formatted_birthday}"
+        return f"Profile of {self.user.username}, Wallet: {self.wallet_address}"
 
 class SessionToken(models.Model):
     user = models.OneToOneField(
