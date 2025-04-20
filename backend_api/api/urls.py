@@ -17,7 +17,7 @@ urlpatterns = [
     #
     path('auth/google/', GoogleView.as_view(), name='google'),
     path('login/', login),
-    path('/register/', register_or_login_wallet),
+    path('register/', register_or_login_wallet),
     path('auth/login_admin/', LoginAdminAPIView.as_view(), name='api-login-admin'),
     path('register/', RegisterAPIView.as_view(), name='api-register'),
     path('user/delete_user_api/', UserDeleteAPIView.as_view(), name='delete_user_api'),
