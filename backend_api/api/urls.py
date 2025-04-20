@@ -11,7 +11,7 @@ from .views import *
 urlpatterns = [
     #
     path('', include('api.testApi.urls')),
-    # path('try/', include('api.try.urls')),
+    path('nfts/', include('api.NTF.urls')),
 
     #
     path('auth/google/', GoogleView.as_view(), name='google'),
