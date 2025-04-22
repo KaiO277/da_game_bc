@@ -13,6 +13,9 @@ urlpatterns = [
     #
     path('', include('api.testApi.urls')),
     path('nfts/', include('api.NTF.urls')),
+    path('race/', include('api.Race.urls')),
+    path('bets/', include('api.Bet.urls')),
+    path('transactions/', include('api.Transaction.urls')),
 
     #
     path('auth/google/', GoogleView.as_view(), name='google'),
