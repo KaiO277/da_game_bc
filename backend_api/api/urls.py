@@ -7,7 +7,7 @@ from .serializers import MyTokenObtainPairView
 from .views import UserMeAPIView
 from .views import *
 from .views import register_or_login_wallet 
-from .views import login
+from .views import login, check_username_exists
 
 urlpatterns = [
     #
@@ -23,5 +23,6 @@ urlpatterns = [
     path('register/', register_or_login_wallet),
     path('auth/login_admin/', LoginAdminAPIView.as_view(), name='api-login-admin'),
     path('register/', RegisterAPIView.as_view(), name='api-register'),
+    path('check-username/', check_username_exists, name='check-username'),
     path('user/delete_user_api/', UserDeleteAPIView.as_view(), name='delete_user_api'),
 ]

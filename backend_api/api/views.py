@@ -94,7 +94,21 @@ def login(request):
         return Response({"error": "Invalid signature"}, status=status.HTTP_401_UNAUTHORIZED)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    
+
+@api_view(['GET'])
+def check_username_exists(request):
+    """
+    API kiểm tra xem username có tồn tại trong cơ sở dữ liệu hay không.
+    Query parameter:
+    - username: tên người dùng cần kiểm tra
+    """
+    username = request.query_params.get('username')
+    if not username:
+        return Response({"error": "Missing 'username' parameter"}, status=status.HTTP_400_BAD_REQUEST)
+
+    exists = User.objects.filter(username=username).exists()
+    return Response({"username": username, "exists": exists}, status=status.HTTP_200_OK)
+
 @api_view(['POST'])
 def register_or_login_wallet(request):
     """
