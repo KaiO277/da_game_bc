@@ -67,8 +67,8 @@ def login(request):
         if not wallet_address or not signature or not message:
             return Response({"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Kiểm tra nếu wallet_address chưa tồn tại
-        if not User.objects.filter(username=wallet_address).exists():
+        # Kiểm tra nếu wallet_address chưa tồn tại trong bảng Profile
+        if not Profile.objects.filter(wallet_address=wallet_address).exists():
             return Response(
                 {"error": "Wallet address not registered. Please register first."},
                 status=status.HTTP_404_NOT_FOUND
@@ -80,8 +80,9 @@ def login(request):
         signature_bytes = b64decode(signature)
         verify_key.verify(message.encode(), signature_bytes)  # Kiểm tra chữ ký
 
-        # Lấy User từ wallet_address
-        user = User.objects.get(username=wallet_address)
+        # Lấy User từ bảng Profile thông qua wallet_address
+        profile = Profile.objects.get(wallet_address=wallet_address)
+        user = profile.user  # Lấy User liên kết với Profile
 
         # Tạo JWT token
         refresh = RefreshToken.for_user(user)
