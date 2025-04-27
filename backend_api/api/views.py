@@ -102,11 +102,17 @@ def check_username_exists(request):
     Query parameter:
     - username: tên người dùng cần kiểm tra
     """
+    # Lấy username từ request body
     username = request.data.get('username')
+    
+    # Nếu không có username, trả về lỗi
     if not username:
         return Response({"error": "Missing 'username' parameter"}, status=status.HTTP_400_BAD_REQUEST)
 
+    # Kiểm tra username có tồn tại trong cơ sở dữ liệu không
     exists = User.objects.filter(username=username).exists()
+    
+    # Trả về kết quả
     return Response({"username": username, "exists": exists}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
