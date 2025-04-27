@@ -102,7 +102,7 @@ def check_username_exists(request):
     Query parameter:
     - username: tên người dùng cần kiểm tra
     """
-    username = request.query_params.get('username')
+    username = request.data.get('username')
     if not username:
         return Response({"error": "Missing 'username' parameter"}, status=status.HTTP_400_BAD_REQUEST)
 
