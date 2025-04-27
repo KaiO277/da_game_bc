@@ -4,4 +4,5 @@ from .submodels.models_test import *
 
 # Register your models here.
 
-admin.site.register(Product)
+admin.site.register(User)
+# admin.site.register()
