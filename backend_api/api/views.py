@@ -67,19 +67,21 @@ def login(request):
         if not wallet_address or not signature or not message:
             return Response({"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Kiểm tra nếu wallet_address chưa tồn tại
+        if not User.objects.filter(username=wallet_address).exists():
+            return Response(
+                {"error": "Wallet address not registered. Please register first."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
         # Xác thực chữ ký
         pubkey_bytes = bytes(Pubkey.from_string(wallet_address))  # Chuyển wallet_address thành bytes
         verify_key = VerifyKey(pubkey_bytes)
         signature_bytes = b64decode(signature)
         verify_key.verify(message.encode(), signature_bytes)  # Kiểm tra chữ ký
 
-        # Nếu không có lỗi, lấy hoặc tạo User
-        user, created = User.objects.get_or_create(username=wallet_address)
-
-        # Nếu user mới được tạo, gán username khác (ví dụ: "user_<wallet_address>")
-        if created:
-            user.username = f"user_{wallet_address[:8]}"  # Tạo username từ wallet_address
-            user.save()
+        # Lấy User từ wallet_address
+        user = User.objects.get(username=wallet_address)
 
         # Tạo JWT token
         refresh = RefreshToken.for_user(user)
@@ -87,7 +89,7 @@ def login(request):
 
         return Response({
             "message": "Login successful",
-            "username": user.username,  # Trả về username đã được sửa đổi
+            "username": user.username,
             "wallet_address": wallet_address,
             "access_token": access_token  # Trả về access token
         }, status=status.HTTP_200_OK)
@@ -96,7 +98,7 @@ def login(request):
         return Response({"error": "Invalid signature"}, status=status.HTTP_401_UNAUTHORIZED)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+    
 @api_view(['POST'])
 def check_username_exists(request):
     """
