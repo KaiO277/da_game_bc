@@ -99,6 +99,7 @@ def login(request):
         return Response({"error": "Invalid signature"}, status=status.HTTP_401_UNAUTHORIZED)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    #
     
 @api_view(['POST'])
 def check_username_exists(request):
