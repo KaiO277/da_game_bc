@@ -95,7 +95,7 @@ def login(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET'])
+@api_view(['POST'])
 def check_username_exists(request):
     """
     API kiểm tra xem username có tồn tại trong cơ sở dữ liệu hay không.
