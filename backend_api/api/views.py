@@ -67,10 +67,6 @@ def login(request):
         if not wallet_address or not signature or not message:
             return Response({"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Kiểm tra tính hợp lệ của thông điệp (timestamp không quá 60 giây)
-        # if not is_message_fresh(message):
-        #     return Response({"error": "Expired message"}, status=status.HTTP_400_BAD_REQUEST)
-
         # Xác thực chữ ký
         pubkey_bytes = bytes(Pubkey.from_string(wallet_address))  # Chuyển wallet_address thành bytes
         verify_key = VerifyKey(pubkey_bytes)
@@ -80,13 +76,19 @@ def login(request):
         # Nếu không có lỗi, lấy hoặc tạo User
         user, created = User.objects.get_or_create(username=wallet_address)
 
+        # Nếu user mới được tạo, gán username khác (ví dụ: "user_<wallet_address>")
+        if created:
+            user.username = f"user_{wallet_address[:8]}"  # Tạo username từ wallet_address
+            user.save()
+
         # Tạo JWT token
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
 
         return Response({
             "message": "Login successful",
-            "username": user.username,
+            "username": user.username,  # Trả về username đã được sửa đổi
+            "wallet_address": wallet_address,
             "access_token": access_token  # Trả về access token
         }, status=status.HTTP_200_OK)
 
