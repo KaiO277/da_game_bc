@@ -26,7 +26,13 @@ class ProductSerializers(serializers.ModelSerializer):
         except Exception as error:
             print("ProductSerializer_add_error: ", error)
             return None
-        
+
+class ProfileSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Profile
+        fields = ['wallet_address']
+
 class UserDetailSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=True)
     profile = ProfileSerializer()

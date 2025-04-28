@@ -49,6 +49,10 @@ class UserDetailMVS(viewsets.ModelViewSet):
     serializer_class = UserDetailSerializer
     # permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        # Logic tùy chỉnh để lấy dữ liệu
+        return User.objects.all()
+
     @action(methods=['GET'], detail=False, url_path="get_user_detail_api", url_name="get_user_detail_api")
     def get_user_detail_api(self, request, *args, **kwargs):
         """
