@@ -49,6 +49,22 @@ class UserDetailMVS(viewsets.ModelViewSet):
     serializer_class = UserDetailSerializer
     # permission_classes = [IsAuthenticated]
 
+    @action(methods=['GET'], detail=False, url_path="get_user_detail_api", url_name="get_user_detail_api")
+    def get_user_detail_api(self, request, *args, **kwargs):
+        """
+        API để lấy tất cả thông tin chi tiết của người dùng.
+        """
+        try:
+            # Lấy tất cả các bản ghi từ bảng UserDetail
+            queryset = self.get_queryset()
+            # Serialize dữ liệu
+            serializer = self.serializer_class(queryset, many=True)
+            # Trả về dữ liệu
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as error:
+            print("UserDetailMVS_get_user_detail_api_error:", error)
+            return Response({'error': 'Internal server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     @action(methods=['GET'], detail=False, url_path="get_user_detail_user_id_api", url_name="get_user_detail_user_id_api")
     def get_user_detail_user_id_api(self, request, *args, **kwargs):
         try:
