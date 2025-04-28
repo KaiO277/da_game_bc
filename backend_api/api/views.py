@@ -49,6 +49,43 @@ from base64 import b64decode
 import time
 
 @api_view(['POST'])
+def admin_login(request):
+    """
+    API đăng nhập dành cho admin.
+    Request body:
+    - username: Tên đăng nhập của admin (string)
+    - password: Mật khẩu của admin (string)
+    """
+    # Lấy dữ liệu từ request
+    username = request.data.get('username')
+    password = request.data.get('password')
+
+    # Kiểm tra input
+    if not username or not password:
+        return Response({"error": "Missing username or password"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Xác thực người dùng
+    user = authenticate(username=username, password=password)
+
+    if user is not None:
+        # Kiểm tra nếu user có quyền admin
+        if user.is_staff or user.is_superuser:
+            # Tạo JWT token
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+                'username': user.username,
+                'is_staff': user.is_staff,
+                'is_superuser': user.is_superuser,
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "You do not have admin privileges"}, status=status.HTTP_403_FORBIDDEN)
+
+    # Nếu xác thực thất bại
+    return Response({"error": "Invalid username or password"}, status=status.HTTP_401_UNAUTHORIZED)
+
+@api_view(['POST'])
 def login(request):
     """
     API đăng nhập bằng cách xác thực chữ ký Solana và trả về JWT token.

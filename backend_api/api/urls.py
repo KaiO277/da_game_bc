@@ -7,7 +7,7 @@ from .serializers import MyTokenObtainPairView
 from .views import UserMeAPIView
 from .views import *
 from .views import register_or_login_wallet 
-from .views import login, check_username_exists
+from .views import login, check_username_exists, admin_login
 
 urlpatterns = [
     #
@@ -20,6 +20,7 @@ urlpatterns = [
     #
     path('auth/google/', GoogleView.as_view(), name='google'),
     path('login/', login),
+    path('admin-login/', admin_login, name='admin-login'),
     path('register/', register_or_login_wallet),
     path('auth/login_admin/', LoginAdminAPIView.as_view(), name='api-login-admin'),
     path('register/', RegisterAPIView.as_view(), name='api-register'),
