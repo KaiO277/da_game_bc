@@ -47,7 +47,7 @@ class ProductMVS(viewsets.ModelViewSet):
     
 class UserDetailMVS(viewsets.ModelViewSet):
     serializer_class = UserDetailSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         # Logic tùy chỉnh để lấy dữ liệu
