@@ -11,7 +11,12 @@ get_race_by_id_api = RaceMVS.as_view({
     'get': 'get_race_by_id_api',
 })
 
+add_race_api = RaceMVS.as_view({
+    'post': 'add_race_api'
+})
+
 urlpatterns = [
     path('', get_all_race_api),
     path('<int:id>/', get_race_by_id_api),
+    path('add/', add_race_api),
 ]

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile, NFT, Product
+from .models import Profile, NFT
 from .submodels.models_test import *
 
 
@@ -7,7 +7,6 @@ from .submodels.models_test import *
 
 admin.site.register(Profile)
 admin.site.register(NFT)
-admin.site.register(Product)
 admin.site.register(Race)
 admin.site.register(Bet)
 admin.site.register(Transaction)

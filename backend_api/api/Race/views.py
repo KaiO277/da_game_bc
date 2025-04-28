@@ -41,6 +41,25 @@ class RaceMVS(viewsets.ModelViewSet):
         except Exception as error:
             print("RaceMVS_get_race_by_id_api: ", error)
         return Response({'error':'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(methods=['POST'], detail=False, url_path='add_race_api', url_name='add_race_api')
+    def add_race_api(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            if serializer.is_valid():
+                model = serializer.add(request)
+                if model:
+                    data = {}
+                    data['message'] = 'Add successfully!'
+                    return Response(data=data, status=status.HTTP_201_CREATED)
+                return Response(
+                    {'error': 'Duplicate or invalid data'},
+                    status=status_http.HTTP_ME_458_DUPLICATE
+                )
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            print("RaceMVS_add_race_api: ", error)
+        return Response({'error':'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
 
 
     
