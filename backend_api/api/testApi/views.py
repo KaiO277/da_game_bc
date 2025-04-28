@@ -56,11 +56,9 @@ class UserDetailMVS(viewsets.ModelViewSet):
         """
         try:
             # Lấy tất cả các bản ghi từ bảng UserDetail
-            queryset = self.get_queryset()
-            # Serialize dữ liệu
+            queryset = User.objects.all()
             serializer = self.serializer_class(queryset, many=True)
-            # Trả về dữ liệu
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
         except Exception as error:
             print("UserDetailMVS_get_user_detail_api_error:", error)
             return Response({'error': 'Internal server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
