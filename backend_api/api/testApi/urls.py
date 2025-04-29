@@ -19,7 +19,7 @@ get_user_detail_api = UserDetailMVS.as_view({
 
 
 urlpatterns = [
-    path('users/<int:id>', get_user_detail_user_id_api),
+    path('users/<int:id>/', get_user_detail_user_id_api),
     path('users/update/', update_user_profile_api),
     path('users/', get_user_detail_api, name='get_user_detail_api'),
 ]

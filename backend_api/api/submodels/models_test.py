@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 # from django.contrib.auth import get_user_model
 
 
-# CustomUser = get_user_model()
+# CustomUser = get_user_model() 
     
 class NFT(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='nfts')
