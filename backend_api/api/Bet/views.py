@@ -84,27 +84,30 @@ class BetMVS(viewsets.ModelViewSet):
             # Lấy user từ wallet_address thông qua bảng Profile
             try:
                 profile = Profile.objects.get(wallet_address=wallet_address)
-                user = profile.user
+                user_id = profile.user.id  # Lấy ID của User
+                print("user_id: ", user_id)
             except Profile.DoesNotExist:
                 return Response({"error": "Wallet address not registered"}, status=status.HTTP_404_NOT_FOUND)
 
             # Lấy NFT từ nft_id
             try:
                 nft = NFT.objects.get(pk=nft_id)
+                nft_id = nft.id  # Lấy ID của NFT
             except NFT.DoesNotExist:
                 return Response({"error": "NFT not found"}, status=status.HTTP_404_NOT_FOUND)
 
             # Lấy Race từ race_id
             try:
                 race = Race.objects.get(pk=race_id)
+                race_id = race.id  # Lấy ID của Race
             except Race.DoesNotExist:
                 return Response({"error": "Race not found"}, status=status.HTTP_404_NOT_FOUND)
 
             # Chuẩn bị dữ liệu để thêm Bet
             bet_data = {
-                "user": user,
-                "nft": nft,
-                "race": race,
+                "user": user_id,  # Truyền ID thay vì đối tượng User
+                "nft": nft_id,    # Truyền ID thay vì đối tượng NFT
+                "race": race_id,  # Truyền ID thay vì đối tượng Race
                 "amount": amount
             }
 
