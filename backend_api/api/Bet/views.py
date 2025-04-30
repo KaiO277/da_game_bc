@@ -42,20 +42,83 @@ class BetMVS(viewsets.ModelViewSet):
             print("BetMVS_get_bet_by_id_api: ", error)
         return Response({'error':'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(methods=['POST'], detail=False, url_path ='add_bet_api', url_name='add_bet_api')
+    # @action(methods=['POST'], detail=False, url_path ='add_bet_api', url_name='add_bet_api')
+    # def add_bet_api(self, request, *args, **kwargs):
+    #     try:
+    #         serializer = self.get_serializer(data=request.data)
+    #         if serializer.is_valid():
+    #             bet = serializer.add(request)
+    #             if bet:
+    #                 return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #             else:
+    #                 return Response({'error':'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+    #         else:
+    #             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    #     except Exception as error:
+    #         print("BetMVS_add_bet_api: ", error)
+    #     return Response({'error':'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(methods=['POST'], detail=False, url_path='add_bet_api', url_name='add_bet_api')
     def add_bet_api(self, request, *args, **kwargs):
+        """
+        API thêm một bản ghi Bet.
+        Input:
+        {
+            "nft_id": 1,
+            "wallet_address": "0xABCDEF123456",
+            "race_id": 1,
+            "amount": 2
+        }
+        """
         try:
-            serializer = self.get_serializer(data=request.data)
+            # Lấy dữ liệu từ request
+            wallet_address = request.data.get('wallet_address')
+            nft_id = request.data.get('nft_id')
+            race_id = request.data.get('race_id')
+            amount = request.data.get('amount')
+
+            # Kiểm tra các trường cần thiết
+            if not wallet_address or not nft_id or not race_id or not amount:
+                return Response({"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Lấy user từ wallet_address thông qua bảng Profile
+            try:
+                profile = Profile.objects.get(wallet_address=wallet_address)
+                user = profile.user
+            except Profile.DoesNotExist:
+                return Response({"error": "Wallet address not registered"}, status=status.HTTP_404_NOT_FOUND)
+
+            # Lấy NFT từ nft_id
+            try:
+                nft = NFT.objects.get(pk=nft_id)
+            except NFT.DoesNotExist:
+                return Response({"error": "NFT not found"}, status=status.HTTP_404_NOT_FOUND)
+
+            # Lấy Race từ race_id
+            try:
+                race = Race.objects.get(pk=race_id)
+            except Race.DoesNotExist:
+                return Response({"error": "Race not found"}, status=status.HTTP_404_NOT_FOUND)
+
+            # Chuẩn bị dữ liệu để thêm Bet
+            bet_data = {
+                "user": user,
+                "nft": nft,
+                "race": race,
+                "amount": amount
+            }
+
+            # Sử dụng hàm add trong serializer để tạo Bet
+            serializer = self.get_serializer(data=bet_data)
             if serializer.is_valid():
                 bet = serializer.add(request)
                 if bet:
-                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                    return Response({"message": "Bet created successfully", "bet_id": bet.id}, status=status.HTTP_201_CREATED)
                 else:
-                    return Response({'error':'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"error": "Failed to create Bet"}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as error:
-            print("BetMVS_add_bet_api: ", error)
-        return Response({'error':'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
 
-    
+        except Exception as error:
+            print("BetMVS_add_bet_api_error: ", error)
+            return Response({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
