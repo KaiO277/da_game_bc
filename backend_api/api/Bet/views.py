@@ -19,6 +19,7 @@ from api import status_http
 class BetMVS(viewsets.ModelViewSet):
     serializer_class = BetSerializers
 
+#test
     def get_queryset(self):
         return Bet.objects.all()
 
