@@ -25,13 +25,13 @@ class NTFsMVS(viewsets.ModelViewSet):
     
     @action(methods=['GET'], detail=False, url_path = 'get_all_ntfs_api', url_name = 'get_all_ntfs_api')
     def get_all_ntfs_api(self, request, *args, **kwargs):
-        try:
+        # try:
             queryset = NFT.objects.all()
             serializer = self.serializer_class(queryset, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as error:
-            print("NTFsMVS_get_all_ntfs_api: ", error)
-        return Response({'error':'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+        # except Exception as error:
+        #     print("NTFsMVS_get_all_ntfs_api: ", error)
+        # return Response({'error':'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(methods=['GET'], detail=False, url_path="get_ntfs_by_user_id_api", url_name="get_ntfs_by_user_id_api")
     def get_ntfs_by_user_id_api(self, request, *args,  ** kwargs):
