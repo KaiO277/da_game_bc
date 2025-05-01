@@ -19,6 +19,10 @@ from api import status_http
 class BetMVS(viewsets.ModelViewSet):
     serializer_class = BetSerializers
 
+    def get_queryset(self):
+        # Logic tùy chỉnh để lấy dữ liệu
+        return Bet.objects.all()
+
     @action(methods=['GET'], detail=False, url_path = 'get_all_bet_api', url_name = 'get_all_bet_api')
     def get_all_bet_api(self, request, *args, **kwargs):
         try:
