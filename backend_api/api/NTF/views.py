@@ -27,7 +27,7 @@ class NTFsMVS(viewsets.ModelViewSet):
     def get_all_ntfs_api(self, request, *args, **kwargs):
         try:
             queryset = NFT.objects.all()
-            serializer = self.get_serializer(queryset, many=True)
+            serializer = self.serializer_class(queryset, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as error:
             print("NTFsMVS_get_all_ntfs_api: ", error)
