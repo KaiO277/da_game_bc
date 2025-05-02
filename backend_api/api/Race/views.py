@@ -60,6 +60,46 @@ class RaceMVS(viewsets.ModelViewSet):
         except Exception as error:
             print("RaceMVS_add_race_api: ", error)
         return Response({'error':'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(methods=['PUT'], detail=True, url_path='update_race_status_api', url_name='update_race_status_api')
+    def update_race_status_api(self, request, pk=None, *args, **kwargs):
+        """
+        API để cập nhật các trường status, end_time, và winner_nft của Race.
+        """
+        try:
+            # Lấy Race từ pk (id) trong URL
+            try:
+                race = Race.objects.get(pk=pk)
+            except Race.DoesNotExist:
+                return Response({"error": "Race not found"}, status=status.HTTP_404_NOT_FOUND)
+
+            # Lấy dữ liệu cần cập nhật từ request
+            status_value = request.data.get('status')
+            end_time_value = request.data.get('end_time')
+            winner_nft_id = request.data.get('winner_nft')
+
+            # Cập nhật các trường nếu có trong request
+            if status_value:
+                race.status = status_value
+            if end_time_value:
+                race.end_time = end_time_value
+            if winner_nft_id:
+                try:
+                    winner_nft = NFT.objects.get(pk=winner_nft_id)
+                    race.winner_nft = winner_nft
+                except NFT.DoesNotExist:
+                    return Response({"error": "Winner NFT not found"}, status=status.HTTP_404_NOT_FOUND)
+
+            # Lưu thay đổi
+            race.save()
+
+            # Trả về thông tin Race đã cập nhật
+            serializer = self.get_serializer(race)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except Exception as error:
+            print("RaceMVS_update_race_status_api_error: ", error)
+            return Response({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
     

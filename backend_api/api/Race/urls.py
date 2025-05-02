@@ -15,8 +15,13 @@ add_race_api = RaceMVS.as_view({
     'post': 'add_race_api'
 })
 
+update_race_status_api = RaceMVS.as_view({
+    'put': 'update_race_status_api'
+})
+
 urlpatterns = [
     path('', get_all_race_api),
     path('<int:id>/', get_race_by_id_api),
     path('add/', add_race_api),
+    path('update/<int:id>/', update_race_status_api),
 ]
