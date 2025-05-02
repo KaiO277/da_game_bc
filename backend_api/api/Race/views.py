@@ -18,6 +18,9 @@ from api import status_http
 
 class RaceMVS(viewsets.ModelViewSet):
     serializer_class = RaceSerializers
+   
+    def get_queryset(self):
+        return Race.objects.all()
 
     @action(methods=['GET'], detail=False, url_path = 'get_all_race_api', url_name = 'get_all_race_api')
     def get_all_race_api(self, request, *args, **kwargs):
