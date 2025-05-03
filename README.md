@@ -8,7 +8,6 @@ Dự án **Game NFT API** cung cấp backend cho nền tảng website game block
 
 - 🔐 Xác thực người dùng bằng JWT và API Key
 - 🎮 Kết nối và xác thực người dùng qua ví Solana
-- 🖼️ Quản lý ảnh/media, lưu trữ trên Amazon S3
 - 📊 Hệ thống phân loại nội dung (tagging)
 - 🌍 Nhận diện thiết bị người dùng truy cập
 - 🎨 Tích hợp CKEditor 5 trong Admin
