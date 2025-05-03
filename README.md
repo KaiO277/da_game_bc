@@ -29,23 +29,6 @@ Dự án **Game NFT API** cung cấp backend cho nền tảng website game block
 
 ---
 
-## 📁 Cấu trúc thư mục
-
-backend_api/
-├── api/
-| ├──...
-│ ├── settings.py
-│ ├── urls.py
-│ └── wsgi.py
-├── media/
-├── staticfiles/
-├── manage.py
-├── Procfile
-├── requirements.txt
-└── README.md
-
----
-
 ## 🖥️ Cài đặt local
 
 ### 1. Clone dự án
