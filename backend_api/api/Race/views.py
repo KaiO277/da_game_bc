@@ -38,8 +38,8 @@ class RaceMVS(viewsets.ModelViewSet):
             id = kwargs['id']
             if id == 0:
                 return Response(data={}, status=status.HTTP_200_OK)
-            race = Race.objects.filter(pk=id)
-            serializer = self.get_serializer(race, many=False)
+            race = Race.objects.filter(pk=id).first() 
+            serializer = self.serializer_class(race, many=False)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as error:
             print("RaceMVS_get_race_by_id_api: ", error)
