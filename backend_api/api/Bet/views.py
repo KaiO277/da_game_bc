@@ -39,7 +39,9 @@ class BetMVS(viewsets.ModelViewSet):
             id = kwargs['id']
             if id == 0:
                 return Response(data={}, status=status.HTTP_200_OK)
-            bet = Bet.objects.filter(pk=id)
+            bet = Bet.objects.filter(pk=id).first() 
+            if not bet:
+                return Response({'error':'Not found'}, status=status.HTTP_404_NOT_FOUND)
             serializer = self.get_serializer(bet, many=False)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as error:
