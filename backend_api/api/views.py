@@ -64,7 +64,6 @@ def admin_login(request):
     if not username or not password:
         return Response({"error": "Missing username or password"}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Xác thực người dùng
     user = authenticate(username=username, password=password)
 
     if user is not None:
