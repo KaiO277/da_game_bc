@@ -28,4 +28,11 @@ class RaceSerializers(serializers.ModelSerializer):
             print("RaceSerializer_add_error: ", error)
             return None
 
-            
+    def delete(self, request):
+        try:
+            model = Race.objects.get(pk=self.validated_data['id'])
+            model.delete()
+            return True 
+        except Exception as error:
+            print("RaceSerializers_delete_error: ", error)
+            return None

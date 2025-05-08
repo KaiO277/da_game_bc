@@ -104,5 +104,15 @@ class RaceMVS(viewsets.ModelViewSet):
             print("RaceMVS_update_race_status_api_error: ", error)
             return Response({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-    
+    @action(methods=['DELETE'], detail=True, url_path='delete_race_api', url_name='delete_race_api')
+    def delete_race_api(self, request, pk=None, *args, **kwargs):
+        try:    
+            id = kwargs.get('id')
+            if not id:
+                return Response(data={}, status=status.HTTP_400_BAD_REQUEST)
+            
+            Race.objects.filter(pk=id).delete()
+            return Response(data={'message': 'Delete successfully!'}, status=status.HTTP_200_OK)
+        except Exception as error:
+            print("RaceMVS_delete_race_api_error:", error)
+            return Response({'error': 'Internal server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
