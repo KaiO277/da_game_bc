@@ -35,15 +35,14 @@ class Race(models.Model):
     
 
 class Bet(models.Model):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='bets')  # Thêm null=True
-    nft = models.ForeignKey('NFT', on_delete=models.SET_NULL, null=True, related_name='bets')  # Thêm null=True
-    race = models.ForeignKey('Race', on_delete=models.SET_NULL, null=True, related_name='bets')  # Thêm null=True
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bets')  # Thay đổi thành CASCADE
+    nft = models.ForeignKey('NFT', on_delete=models.CASCADE, related_name='bets')  # Thay đổi thành CASCADE
+    race = models.ForeignKey('Race', on_delete=models.SET_NULL, null=True, related_name='bets')  # Giữ nguyên SET_NULL
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Bet by {self.user.username} on Race: {self.race.name} with NFT: {self.nft.name} (Amount: {self.amount})"
-    
 
 class Transaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='transactions')  # Thêm null=True

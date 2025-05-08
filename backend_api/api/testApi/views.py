@@ -70,12 +70,25 @@ class UserDetailMVS(viewsets.ModelViewSet):
     @action(methods=['DELETE'], detail=False, url_path="delete_user_profile_api", url_name="delete_user_profile_api")
     def delete_user_profile_api(self, request, *args, **kwargs):
         try:
-            user_id = kwargs['id']
-            if user_id == 0 :
-                return Response(data={}, status=status.HTTP_200_OK)
-            queryset = User.objects.get(pk=user_id)
-            queryset.delete()
-            return Response(data={}, status=status.HTTP_200_OK)
+            user_id = kwargs.get('id')
+            if not user_id:
+                return Response(data={}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Lấy người dùng
+            user = User.objects.get(pk=user_id)
+
+            # Xóa tất cả các bản ghi liên quan trong bảng Bet
+            Bet.objects.filter(nft__user=user).delete()
+
+            # Xóa tất cả các NFT liên quan đến người dùng
+            user.nfts.all().delete()
+
+            # Xóa người dùng
+            user.delete()
+
+            return Response(data={'message': 'User deleted successfully'}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as error:
             print("UserDetailMVS_delete_user_profile_api_error:", error)
             return Response({'error': 'Internal server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
