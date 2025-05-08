@@ -39,3 +39,16 @@ class NTFSerializers(serializers.ModelSerializer):
         except Exception as error:
             print("NFTStakeSerializer_update_stake_error:", error)
             return None
+    
+    def delete(self, request):
+        try:
+            id = self.validated_data['id']
+            nft = NFT.objects.get(pk=id)
+            nft.delete()
+            return True
+        except NFT.DoesNotExist:
+            print("NFTStakeSerializer_delete_error: NFT not found")
+            return False
+        except Exception as error:
+            print("NFTStakeSerializer_delete_error:", error)
+            return False
