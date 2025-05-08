@@ -5,9 +5,8 @@ from django.contrib.auth.models import User
 
 
 # CustomUser = get_user_model() 
-    
 class NFT(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='nfts')
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='nfts')  # Thêm null=True
     token_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=100)
     image_url = models.TextField()
@@ -17,6 +16,7 @@ class NFT(models.Model):
     def __str__(self):
         return f"{self.name} (Token ID: {self.token_id})"
     
+
 class Race(models.Model):
     name = models.CharField(max_length=255)
     status = models.CharField(
@@ -35,18 +35,19 @@ class Race(models.Model):
     
 
 class Bet(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bets')
-    nft = models.ForeignKey('NFT', on_delete=models.CASCADE, related_name='bets')
-    race = models.ForeignKey('Race', on_delete=models.CASCADE, related_name='bets')
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='bets')  # Thêm null=True
+    nft = models.ForeignKey('NFT', on_delete=models.SET_NULL, null=True, related_name='bets')  # Thêm null=True
+    race = models.ForeignKey('Race', on_delete=models.SET_NULL, null=True, related_name='bets')  # Thêm null=True
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Bet by {self.user.username} on Race: {self.race.name} with NFT: {self.nft.name} (Amount: {self.amount})"
     
+
 class Transaction(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='transactions')
-    nft = models.ForeignKey('NFT', on_delete=models.CASCADE, related_name='transactions', null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='transactions')  # Thêm null=True
+    nft = models.ForeignKey('NFT', on_delete=models.SET_NULL, null=True, blank=True, related_name='transactions')
     tx_type = models.CharField(
         max_length=50,
         choices=[
