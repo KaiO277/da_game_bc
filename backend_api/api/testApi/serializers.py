@@ -19,6 +19,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'first_name', 'last_name', 'profile']
 
     def update_user_with_profile(self):
+
         try:
             user_id = self.validated_data['id']
             username = self.validated_data.get('username')
@@ -56,3 +57,13 @@ class UserDetailSerializer(serializers.ModelSerializer):
         except Exception as error:
             print("UserProfileUpdateSerializer_update_user_with_profile_error:", error)
             return None
+        
+    def delete(self, instance):
+        try:
+            user_id = self.validated_data['id']
+            user = User.objects.get(pk=user_id)
+            user.delete()
+            return True
+        except Exception as error:
+            print("UserProfileUpdateSerializer_delete_user_error:", error)
+            return False

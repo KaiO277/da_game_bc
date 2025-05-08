@@ -19,7 +19,7 @@ from api import status_http
  
 class UserDetailMVS(viewsets.ModelViewSet):
     serializer_class = UserDetailSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         # Logic tùy chỉnh để lấy dữ liệu
@@ -65,4 +65,17 @@ class UserDetailMVS(viewsets.ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as error:
             print("UserDetailMVS_update_user_profile_api_error:", error)
+            return Response({'error': 'Internal server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    @action(methods=['DELETE'], detail=False, url_path="delete_user_profile_api", url_name="delete_user_profile_api")
+    def delete_user_profile_api(self, request, *args, **kwargs):
+        try:
+            user_id = kwargs['id']
+            if user_id == 0 :
+                return Response(data={}, status=status.HTTP_200_OK)
+            queryset = User.objects.get(pk=user_id)
+            queryset.delete()
+            return Response(data={}, status=status.HTTP_200_OK)
+        except Exception as error:
+            print("UserDetailMVS_delete_user_profile_api_error:", error)
             return Response({'error': 'Internal server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
